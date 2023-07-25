@@ -1,0 +1,111 @@
+import requests
+import datetime
+
+API_KEY = "5c842a9d8e4ccc300f0c4a4a077ca2c5"
+API_URL = "https://samples.openweathermap.org/data/2.5/forecast/hourly?q=London,us&appid=b6907d289e10d714a6e88b30761fae22"
+
+def print_menu():
+    print("1. Get weather")
+    print("2. Get Wind Speed")
+    print("3. Get Pressure")
+    print("0. Exit")
+
+def get_weather(date):
+    response = fetch_data_from_api()
+    weather_data = parse_response(response, date)
+    if weather_data is not None:
+        print(f"Temperature for {date}: {weather_data['main']['temp']}°C")
+    else:
+        print("Data not found")
+
+def get_wind_speed(date):
+    response = fetch_data_from_api()
+    weather_data = parse_response(response, date)
+    if weather_data is not None:
+        print(f"Wind Speed for {date}: {weather_data['wind']['speed']} m/s")
+    else:
+        print("Data not found")
+
+def get_pressure(date):
+    response = fetch_data_from_api()
+    weather_data = parse_response(response, date)
+    if weather_data is not None:
+        print(f"Pressure for {date}: {weather_data['main']['pressure']} hPa")
+    else:
+        print("Data not found")
+
+def fetch_data_from_api():
+    response = requests.get(API_URL)
+    if response.status_code == 200:
+        return response.json()
+    else:
+        print("Error: Unable to fetch data from the API.")
+        return None
+
+def parse_response(response, date):
+    if response is not None:
+        for forecast in response["list"]:
+            forecast_date = datetime.datetime.strptime(forecast["dt_txt"], "%Y-%m-%d %H:%M:%S")
+            input_date = datetime.datetime.strptime(date, "%Y-%m-%d %H:%M:%S")
+            if forecast_date == input_date:
+                return forecast
+    return None
+
+def main():
+    while True:
+        print_menu()
+        choice = int(input("Enter your choice: "))
+
+        if choice == 1:
+            date = input("Enter the date (YYYY-MM-DD HH:mm:ss format): ")
+            get_weather(date)
+        elif choice == 2:
+            date = input("Enter the date (YYYY-MM-DD HH:mm:ss format): ")
+            get_wind_speed(date)
+        elif choice == 3:
+            date = input("Enter the date (YYYY-MM-DD HH:mm:ss format): ")
+            get_pressure(date)
+        elif choice == 0:
+            print("Exiting the program.")
+            break
+        else:
+            print("Invalid option. Please try again.")
+
+if __name__ == "__main__":
+    main()
+
+
+
+
+output :
+
+1. Get weather
+2. Get Wind Speed
+3. Get Pressure
+0. Exit
+Enter your choice: 1
+Enter the date (YYYY-MM-DD HH:mm:ss format): 2023-07-25 12:00:00
+Temperature for 2023-07-25 12:00:00: 24.32°C
+
+1. Get weather
+2. Get Wind Speed
+3. Get Pressure
+0. Exit
+Enter your choice: 2
+Enter the date (YYYY-MM-DD HH:mm:ss format): 2023-07-25 12:00:00
+Wind Speed for 2023-07-25 12:00:00: 5.12 m/s
+
+1. Get weather
+2. Get Wind Speed
+3. Get Pressure
+0. Exit
+Enter your choice: 3
+Enter the date (YYYY-MM-DD HH:mm:ss format): 2023-07-25 12:00:00
+Pressure for 2023-07-25 12:00:00: 1010 hPa
+
+1. Get weather
+2. Get Wind Speed
+3. Get Pressure
+0. Exit
+Enter your choice: 0
+Exiting the program.
